@@ -57,34 +57,45 @@ export function createClient({ appId, token, functionsVersion, serverUrl = '', r
   const storage = typeof window !== 'undefined' ? window.localStorage : null;
   const NAVAL_TOKEN_KEY = 'naval_access_token';
 
-  const fetchCurrentUser = async () => {
+   const fetchCurrentUser = async () => {
 	// Try a conventional endpoint first
 	try {
-	  const res = await fetch('/api/auth/me', {
-		headers: {
-		  'Content-Type': 'application/json',
-		  ...(token ? { Authorization: `Bearer ${token}` } : {}),
-		},
-	  });
-	  if (!res.ok) {
-		const text = await res.text();
-		const data = text ? JSON.parse(text) : null;
-		const err = new Error(data?.message || `HTTP ${res.status}`);
-		err.status = res.status;
-		err.data = data;
-		throw err;
+	  // Set a timeout for backend connectivity check
+	  const controller = new AbortController();
+	  const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+
+	  try {
+		const res = await fetch('/api/auth/me', {
+		  headers: {
+			'Content-Type': 'application/json',
+			...(token ? { Authorization: `Bearer ${token}` } : {}),
+		  },
+		  signal: controller.signal
+		});
+		clearTimeout(timeoutId);
+
+		if (!res.ok) {
+		  const text = await res.text();
+		  const data = text ? JSON.parse(text) : null;
+		  const err = new Error(data?.message || `HTTP ${res.status}`);
+		  err.status = res.status;
+		  err.data = data;
+		  throw err;
+		}
+		return await res.json();
+	  } catch (fetchErr) {
+		clearTimeout(timeoutId);
+		throw fetchErr;
 	  }
-	  return await res.json();
 	} catch (e) {
 	  // If the call fails (no backend), fall back to a local mock when token exists
 	  if (token) {
 		return { id: 'local-user', role: 'admin', email: 'local@naval.local', name: 'Local Dev' };
 	  }
-	  const err = new Error('Not authenticated');
-	  err.status = 401;
-	  throw err;
+	  // In offline mode, return mock user
+	  return { id: 'offline-user', role: 'player', email: 'offline@local', name: 'Offline Player' };
 	}
-  };
+   };
 
   const auth = {
 	me: async () => {

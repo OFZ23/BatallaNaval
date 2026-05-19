@@ -4,7 +4,7 @@ import path from 'path'
 
 // Vite configuration with React plugin
 export default defineConfig({
-  base: '/NavalTatics/', // Cambiar 'NavalTatics' por el nombre de tu repositorio
+  base: '/BatallaNaval/', // Repositorio en GitHub
   logLevel: 'error', // Suppress warnings, only show errors
   resolve: {
     alias: {

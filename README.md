@@ -137,10 +137,10 @@ El proyecto está configurado para desplegar automáticamente en GitHub Pages.
 
 **Pasos rápidos:**
 
-1. Crea un repositorio en GitHub llamado `NavalTatics`
+1. Crea un repositorio en GitHub llamado `BatallaNaval`
 2. Configura el remote:
    ```bash
-   git remote add origin https://github.com/TU_USUARIO/NavalTatics.git
+   git remote add origin https://github.com/TU_USUARIO/BatallaNaval.git
    git branch -M main
    git push -u origin main
    ```
@@ -149,7 +149,7 @@ El proyecto está configurado para desplegar automáticamente en GitHub Pages.
 
 📖 **[Ver guía completa de deploy →](DEPLOY_GUIDE.md)**
 
-El sitio estará disponible en: `https://TU_USUARIO.github.io/NavalTatics/`
+El sitio estará disponible en: `https://TU_USUARIO.github.io/BatallaNaval/`
 
 ---
 

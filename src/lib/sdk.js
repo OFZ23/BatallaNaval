@@ -58,8 +58,15 @@ export function createClient({ appId, token, functionsVersion, serverUrl = '', r
   const NAVAL_TOKEN_KEY = 'naval_access_token';
 
    const fetchCurrentUser = async () => {
-	// Try a conventional endpoint first
-	try {
+		// If we are served from GitHub Pages (static host), NEVER hit the network.
+		// Detect by hostname containing 'github.io' and return an immediate mock user.
+		// This prevents the browser from emitting a real HTTP 404 for /api/auth/me.
+		if (typeof window !== 'undefined' && window.location.hostname && window.location.hostname.includes('github.io')) {
+		  return { id: 'gh-pages-user', role: 'player', email: 'offline@local', name: 'GitHub Pages' };
+		}
+
+		// Try a conventional endpoint first
+		try {
 	  // Set a timeout for backend connectivity check
 	  const controller = new AbortController();
 	  const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout

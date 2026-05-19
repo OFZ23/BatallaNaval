@@ -43,11 +43,18 @@ const AuthenticatedApp = () => {
 
 
 function App() {
+  // Compute a basename for react-router based on environment.
+  // On GitHub Pages the app is served under a repository subpath (e.g. /BatallaNaval/).
+  // Use import.meta.env.BASE_URL when available, but override to '/BatallaNaval/' when
+  // running on github.io to ensure the router resolves routes correctly in production.
+  const basename = (typeof window !== 'undefined' && window.location.hostname && window.location.hostname.includes('github.io'))
+    ? '/BatallaNaval/'
+    : (import.meta.env.BASE_URL || '/');
 
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
-        <Router>
+        <Router basename={basename}>
           <AuthenticatedApp />
         </Router>
         <Toaster />
